@@ -30,8 +30,8 @@ def read_raw(path):
 
 if __name__ == '__main__':
     root = 'raw'
-    #dataset_name = 'gowalla'
-    dataset_name = 'amazon-book'
+    dataset_name = 'gowalla'
+    #dataset_name = 'amazon-book'
     
     train_path = os.path.join(dataset_name, root, 'train.txt')
     test_path = os.path.join(dataset_name, root, 'test.txt')
@@ -47,3 +47,4 @@ if __name__ == '__main__':
         pickle.dump(train_U2I, f, pickle.HIGHEST_PROTOCOL)
         pickle.dump(test_U2I, f, pickle.HIGHEST_PROTOCOL)
         pickle.dump([num_user, num_item], f, pickle.HIGHEST_PROTOCOL)
+        print('??')
