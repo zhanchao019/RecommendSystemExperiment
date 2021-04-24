@@ -3,7 +3,7 @@
 @author: LMC_ZC
 """
 
-root = '/zhaochen/RS_FIRST_EXPERIMENT/CollaborativeFilterGCN'
+root = '/content/drive/MyDrive/RecommendSystemExperiment/CollaborativeFilterGCN'
 
 import sys
 sys.path.append(root)
@@ -30,7 +30,7 @@ def parse_args():
     parser.add_argument('--lr', default=0.001, type=float)
     parser.add_argument('--decay', default=0.001, type=float)
     parser.add_argument('--layers', default=3, type=int)
-    parser.add_argument('--batch_size', default=4096, type=int)
+    parser.add_argument('--batch_size', default=8192, type=int)
 
     parser.add_argument('--topks', default='[10,20]', type=str)
     parser.add_argument('--log', default=root + '/log/lightgcn.txt', type=str)
@@ -96,5 +96,5 @@ if __name__ == '__main__':
             print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info))
             
             # save embedding
-            # torch.save((user_emb, item_emb), f=args.parameters_path + '_' + str(epoch + 1) + '.pth')
+            torch.save((user_emb, item_emb), f=args.parameters_path + '_' + str(epoch + 1) + '.pth')
     f.close()
