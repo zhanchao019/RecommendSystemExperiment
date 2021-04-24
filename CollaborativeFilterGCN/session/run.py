@@ -22,11 +22,10 @@ class Session(object):
         all_loss, all_mf_loss, all_reg_loss = 0.0, 0.0, 0.0
 
         for uij in loader:
+            u = uij[0].type(torch.long)
+            i = uij[1].type(torch.long)
+            j = uij[2].type(torch.long)
 
-            u = uij[0].type(torch.long).cuda()
-            i = uij[1].type(torch.long).cuda()
-            j = uij[2].type(torch.long).cuda()
-            
             user_emb, item_emb = self.model.propagate()
             user_emb, pos_emb, neg_emb = self.model.get_embedding(user_emb, item_emb, u, i, j)
             bpr_loss, mf_loss, reg_loss = self.model.bpr_loss(user_emb, pos_emb, neg_emb)

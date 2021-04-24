@@ -26,11 +26,11 @@ def parse_args():
     parser.add_argument('--data_path', default=root + '/data', type=str)
     
     parser.add_argument('--emb_size', default=64, type=int)
-    parser.add_argument('--num_epoch', default=1000, type=int)
+    parser.add_argument('--num_epoch', default=10, type=int)
     parser.add_argument('--lr', default=0.001, type=float)
     parser.add_argument('--decay', default=0.001, type=float)
     parser.add_argument('--layers', default=3, type=int)
-    parser.add_argument('--batch_size', default=4096, type=int)
+    parser.add_argument('--batch_size', default=32, type=int)
 
     parser.add_argument('--topks', default='[10,20]', type=str)
     parser.add_argument('--log', default=root + '/log/lightgcn.txt', type=str)
@@ -65,10 +65,10 @@ if __name__ == '__main__':
 
     loader = get_dataloader(train_set, train_U2I, n_items, args.batch_size, args.cores)
     g = LaplaceGraph(n_users, n_items, train_U2I)
-    adj = g.generate().cuda()
+    adj = g.generate()
 
     gcn = LightGCN(n_users, n_items, adj, args)
-    gcn = gcn.cuda()
+    gcn = gcn
 
     optimizer = optim.Adam(gcn.parameters(), lr=args.lr)
 
