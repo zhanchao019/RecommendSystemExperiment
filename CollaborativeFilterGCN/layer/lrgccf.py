@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 
-@author: LMC_ZC
 
 AAAI-2020
 Revisiting Graph based Collaborative Filtering: A Linear Residual Graph Convolutional Network Approach

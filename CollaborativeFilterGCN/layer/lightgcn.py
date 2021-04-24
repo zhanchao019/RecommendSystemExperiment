@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
 """
-
-@author: LMC_ZC
-
 SIGIR-2020
 LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation
 

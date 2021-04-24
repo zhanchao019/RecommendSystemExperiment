@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: LMC_ZC
+
 
 SIGIR-2019
 Neural Graph Collaborative Filtering

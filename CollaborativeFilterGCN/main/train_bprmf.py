@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-@author: LMC_ZC
-"""
-
 root = '/zhaochen/RS_FIRST_EXPERIMENT/CollaborativeFilterGCN'
 
 import sys

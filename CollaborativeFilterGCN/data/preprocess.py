@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-
-@author: LMC_ZC
-"""
-
 import os
 import pickle
 import numpy as np

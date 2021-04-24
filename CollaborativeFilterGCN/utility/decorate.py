@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-
-@author: LMC_ZC
-"""
 
 import time
 import inspect

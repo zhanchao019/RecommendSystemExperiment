@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-@author: LMC_ZC
-
-"""
-
 import math
 import torch
 import numpy as np

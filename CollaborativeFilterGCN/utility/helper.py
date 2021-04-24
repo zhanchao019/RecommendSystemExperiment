@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-
-@author : LMC_ZC
-"""
-
 def record_perf(*args, recall=[], ndcg=[], statistial_parity=[], equal_opportunity=[]):
     recall += [args[0]]
     ndcg += [args[1]]

@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-@author: LMC_ZC
-
-"""
-
-
 import torch
 from utility.decorate import logger
 
