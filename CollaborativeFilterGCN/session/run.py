@@ -21,7 +21,7 @@ class Session(object):
         self.model.train()
         all_loss, all_mf_loss, all_reg_loss = 0.0, 0.0, 0.0
 
-        for uij in loader:
+        for uij in tqdm(loader, unit="user Node", desc='training...'):
 
             u = uij[0].type(torch.long).cuda()
             i = uij[1].type(torch.long).cuda()

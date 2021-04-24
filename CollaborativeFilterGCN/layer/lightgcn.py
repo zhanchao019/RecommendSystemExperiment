@@ -11,7 +11,7 @@ LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+import time
 class LightGCN(nn.Module):
 
     def __init__(self, n_users, n_items, adj, args, user_feat=None, item_feat=None):
@@ -74,9 +74,16 @@ class LightGCN(nn.Module):
         return u_emb, pos_emb, neg_emb
     
     def propagate(self):
+        t1=time()
         all_emb = self.forward(self.adj)
+        t2=time()
+        print('forward consume %.2f s' % (t2 - t1))
         f_emb = self.fusion(all_emb)
+        t3=time()
+        print('fusion consume %.2f s' % (t3 - t2))
         user_emb, item_emb = self.split_emb(f_emb)
+        t4=time()
+        print('split consume %.2f s' % (t4 - t3))
         
         return user_emb, item_emb
 

@@ -81,7 +81,7 @@ if __name__ == '__main__':
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss))
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss), file=f)
 
-        gcn.eval()
+        gcn.eval()#打开评估模式
         with torch.no_grad():
             user_emb, item_emb = test(gcn, n_users, n_items)
             perf_info = evaluate(user_emb,
