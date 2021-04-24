@@ -3,7 +3,7 @@
 @author: LMC_ZC
 """
 
-root = '/zhaochen/RS_FIRST_EXPERIMENT/CollaborativeFilterGCN'
+root = '/Users/zhanchao/GitHub/RecommendSystemExperiment/CollaborativeFilterGCN'
 
 import sys
 sys.path.append(root)
@@ -34,8 +34,8 @@ def parse_args():
 
     parser.add_argument('--topks', default='[10,20]', type=str)
     parser.add_argument('--log', default=root + '/log/lightgcn.txt', type=str)
-    parser.add_argument('--parameters_path', default= root + '/parameters/lightgcn', type=str)
-    parser.add_argument('--cores', default=4, type=int)
+    parser.add_argument('--parameters_path', default=root + '/parameters/lightgcn', type=str)
+    parser.add_argument('--cores', default=2, type=int)
     
     return parser.parse_args()
 
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     # load movielens-1m
     # data = FeaturesData(args.data_path, args.dataset_name)
     # train_set, train_U2I, test_U2I, n_users, n_items, user_feat = data.load()
-
+    print('start')
     # load gowall
     data = UserItemData(args.data_path, args.dataset_name)
     train_set, train_U2I, test_U2I, n_users, n_items = data.load()
