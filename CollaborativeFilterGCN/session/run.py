@@ -1,6 +1,6 @@
 import torch
 from utility.decorate import logger
-
+from tqdm import tqdm
 
 class Session(object):
 

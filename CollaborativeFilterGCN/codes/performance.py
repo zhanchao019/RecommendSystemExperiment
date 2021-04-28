@@ -4,14 +4,17 @@ import numpy as np
 import multiprocessing as mp
 from utility.decorate import logger
 from utility.metrics import recall_k, ndcg_k
+from tqdm import tqdm
+from progressbar import ProgressBar, Bar, ETA
 
 
-@logger(begin_message=None, end_message=None)
 def evaluate(user_emb, item_emb, n_users, n_items, train_U2I, test_U2I, args):
-
     scores = np.matmul(user_emb, item_emb.T)
-    perf_info = performance_speed(scores,  train_U2I, test_U2I, args)
+    print('1')
+    perf_info = performance_speed(scores, train_U2I, test_U2I, args)
+    print('2')
     perf_info = np.mean(perf_info, axis=0)
+    print('3')
 
     return perf_info
 
@@ -25,20 +28,35 @@ def _init(_scores, _train_U2I, _test_U2I, _topks):
 
 
 def performance_speed(scores, train_U2I, test_U2I, args):
-    
     topks = eval(args.topks)
-    
+    print("1.1")
     test_user_set = list(test_U2I.keys())
-
+    print("1.2")
     perf_info = np.zeros((len(test_user_set), 2 * len(topks)), dtype=np.float32)
-
+    print("1.3")
     test_parameters = zip(test_user_set, )
+    test_parameters.
+    print("1.3.1")
+    print(scores.shape)
+    print(len(train_U2I))
+    print(len(test_U2I))
+    root = '/content/drive/MyDrive/RecommendSystemExperiment/CollaborativeFilterGCN'
+
+    np.save(root + '/tmp/train_U2I.npy', train_U2I)
+    np.save(root + '/tmp/test_U2I.npy', test_U2I)
+    '''
     with mp.Pool(processes=args.cores, initializer=_init, initargs=(scores, train_U2I, test_U2I, topks,)) as pool:
         all_perf = pool.map(test_one_perf, test_parameters)
+    '''
+    with mp.Pool(processes=args.cores, initializer=_init, initargs=(scores, train_U2I, test_U2I, topks,)) as pool:
+        widgets = [Bar(), ETA()]
+        pbar = ProgressBar(widgets=widgets, maxval=len(train_U2I))
+        list(pbar(pool.imap(test_one_perf, test_parameters)))
 
-    for i, one_perf in enumerate(all_perf):
+    print("1.4")
+    for i, one_perf in tqdm(enumerate(all_perf)):
         perf_info[i] = one_perf
-
+    print("1.5")
     return perf_info
 
 

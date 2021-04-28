@@ -7,7 +7,7 @@ LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import time
+from time import time
 class LightGCN(nn.Module):
 
     def __init__(self, n_users, n_items, adj, args, user_feat=None, item_feat=None):
