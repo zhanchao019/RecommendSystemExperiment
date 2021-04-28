@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     f = open(args.log+ '_' + args.dataset_name +'.txt', 'w+')
     for epoch in range(args.num_epoch):
-
+        print('training '+args.dataset_name+'_lightgcn')
         loss = sess.train(loader, optimizer, args)
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss))
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss), file=f)
