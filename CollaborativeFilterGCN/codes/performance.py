@@ -5,8 +5,7 @@ import multiprocessing as mp
 from utility.decorate import logger
 from utility.metrics import recall_k, ndcg_k
 from tqdm import tqdm
-from progressbar import ProgressBar, Bar, ETA
-
+#
 
 def evaluate(user_emb, item_emb, n_users, n_items, train_U2I, test_U2I, args):
     scores = np.matmul(user_emb, item_emb.T)
