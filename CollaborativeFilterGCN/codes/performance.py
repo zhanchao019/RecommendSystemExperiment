@@ -35,32 +35,30 @@ def performance_speed(scores, train_U2I, test_U2I, args):
     perf_info = np.zeros((len(test_user_set), 2 * len(topks)), dtype=np.float32)
     print("1.3")
     test_parameters = zip(test_user_set, )
-    test_parameters.
     print("1.3.1")
-    print(scores.shape)
+    #print(scores.shape)
     print(len(train_U2I))
     print(len(test_U2I))
-    root = '/content/drive/MyDrive/RecommendSystemExperiment/CollaborativeFilterGCN'
+    root = '/RecommendSystemExperiment/CollaborativeFilterGCN'
 
-    np.save(root + '/tmp/train_U2I.npy', train_U2I)
-    np.save(root + '/tmp/test_U2I.npy', test_U2I)
-    '''
-    with mp.Pool(processes=args.cores, initializer=_init, initargs=(scores, train_U2I, test_U2I, topks,)) as pool:
-        all_perf = pool.map(test_one_perf, test_parameters)
-    '''
-    with mp.Pool(processes=args.cores, initializer=_init, initargs=(scores, train_U2I, test_U2I, topks,)) as pool:
-        widgets = [Bar(), ETA()]
-        pbar = ProgressBar(widgets=widgets, maxval=len(train_U2I))
-        list(pbar(pool.imap(test_one_perf, test_parameters)))
+    #global scores, train_user_item, test_user_item, topks
+    #with mp.Pool(processes=args.cores, initializer=_init, initargs=(scores, train_U2I, test_U2I, topks,)) as pool:
+    #    all_perf = pool.map(test_one_perf, test_parameters)
+
+    result=[]
+    for i in tqdm(test_parameters):
+        #print(i.shape())
+        tmp=test_one_perf(i,scores,train_U2I,test_U2I,topks)
+        result.append(tmp)
 
     print("1.4")
-    for i, one_perf in tqdm(enumerate(all_perf)):
+    for i, one_perf in tqdm(enumerate(result)):
         perf_info[i] = one_perf
     print("1.5")
     return perf_info
 
 
-def test_one_perf(X):
+def test_one_perf(X,scores,train_user_item, test_user_item,topks):
     u_id = X[0]
     score = scores[u_id]
     uid_train_pos_items = list(train_user_item[u_id])
@@ -87,3 +85,4 @@ def get_perf(rank, uid_test_pos_items, topks):
         topk_eval[i * 2 + 1] = ndcg_k(rank[:topk], uid_test_pos_items)
 
     return topk_eval
+
