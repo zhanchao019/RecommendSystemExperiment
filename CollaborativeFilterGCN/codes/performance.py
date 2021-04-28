@@ -38,7 +38,8 @@ def performance_speed(scores, train_U2I, test_U2I, args):
     #print(scores.shape)
     print(len(train_U2I))
     print(len(test_U2I))
-    root = '/RecommendSystemExperiment/CollaborativeFilterGCN'
+    root = '/home/ubuntu/RecommendSystemExperiment/CollaborativeFilterGCN'
+
 
     #global scores, train_user_item, test_user_item, topks
     #with mp.Pool(processes=args.cores, initializer=_init, initargs=(scores, train_U2I, test_U2I, topks,)) as pool:
