@@ -73,13 +73,13 @@ class LightGCN(nn.Module):
         t1=time()
         all_emb = self.forward(self.adj)
         t2=time()
-        print('forward consume %.2f s' % (t2 - t1))
+        #print('forward consume %.2f s' % (t2 - t1))
         f_emb = self.fusion(all_emb)
         t3=time()
-        print('fusion consume %.2f s' % (t3 - t2))
+        #print('fusion consume %.2f s' % (t3 - t2))
         user_emb, item_emb = self.split_emb(f_emb)
         t4=time()
-        print('split consume %.2f s' % (t4 - t3))
+        #print('split consume %.2f s' % (t4 - t3))
         
         return user_emb, item_emb
 
