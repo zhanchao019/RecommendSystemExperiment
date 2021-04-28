@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument('--batch_size', default=4096, type=int)
 
     parser.add_argument('--topks', default='[10,20]', type=str)
-    parser.add_argument('--log', default= root + '/log/ngcf.txt', type=str)
+    parser.add_argument('--log', default= root + '/log/ngcf', type=str)
     parser.add_argument('--parameters_path', default=root + '/parameters/ngcf', type=str)
     parser.add_argument('--node_dropout', default=0.1, type=float)
     parser.add_argument('--mess_dropout', default='[0.1,0.1,0.1]', type=str)
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     sess = Session(gcn)
 
-    f = open(args.log, 'w+')
+    f = open(args.log+ '_' + args.dataset_name +'.txt', 'w+')
     for epoch in range(args.num_epoch):
 
         loss = sess.train(loader, optimizer, args)

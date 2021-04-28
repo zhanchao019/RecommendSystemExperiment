@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument('--batch_size', default=4096, type=int)
 
     parser.add_argument('--topks', default='[10,20]', type=str)
-    parser.add_argument('--log', default= root + '/log/bprmf.txt', type=str)
+    parser.add_argument('--log', default= root + '/log/bprmf', type=str)
     parser.add_argument('--parameters_path', default=root + '/parameters/bprmf', type=str)
     parser.add_argument('--cores', default=4, type=int)
     
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     sess = Session(model)
 
-    f = open(args.log, 'w+')
+    f = open(args.log+ '_' + args.dataset_name +'.txt', 'w+')
     for epoch in range(args.num_epoch):
 
         loss = sess.train(loader, optimizer, args)
