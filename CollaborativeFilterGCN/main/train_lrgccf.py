@@ -1,4 +1,4 @@
-root = '/zhaochen/RS_FIRST_EXPERIMENT/CollaborativeFilterGCN'
+root = '/home/ubuntu/RecommendSystemExperiment/CollaborativeFilterGCN'
 
 import sys
 sys.path.append(root)
