@@ -10,11 +10,11 @@ from progressbar import ProgressBar, Bar, ETA
 
 def evaluate(user_emb, item_emb, n_users, n_items, train_U2I, test_U2I, args):
     scores = np.matmul(user_emb, item_emb.T)
-    print('1')
+    #print('1')
     perf_info = performance_speed(scores, train_U2I, test_U2I, args)
-    print('2')
+    #print('2')
     perf_info = np.mean(perf_info, axis=0)
-    print('3')
+    #print('3')
 
     return perf_info
 
@@ -29,13 +29,13 @@ def _init(_scores, _train_U2I, _test_U2I, _topks):
 
 def performance_speed(scores, train_U2I, test_U2I, args):
     topks = eval(args.topks)
-    print("1.1")
+    #print("1.1")
     test_user_set = list(test_U2I.keys())
-    print("1.2")
+    #print("1.2")
     perf_info = np.zeros((len(test_user_set), 2 * len(topks)), dtype=np.float32)
-    print("1.3")
+    #print("1.3")
     test_parameters = zip(test_user_set, )
-    print("1.3.1")
+    #print("1.3.1")
     #print(scores.shape)
     print(len(train_U2I))
     print(len(test_U2I))
@@ -51,10 +51,10 @@ def performance_speed(scores, train_U2I, test_U2I, args):
         tmp=test_one_perf(i,scores,train_U2I,test_U2I,topks)
         result.append(tmp)
 
-    print("1.4")
+    #print("1.4")
     for i, one_perf in tqdm(enumerate(result)):
         perf_info[i] = one_perf
-    print("1.5")
+    #print("1.5")
     return perf_info
 
 
