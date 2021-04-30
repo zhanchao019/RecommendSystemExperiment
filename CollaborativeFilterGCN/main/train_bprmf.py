@@ -88,5 +88,7 @@ if __name__ == '__main__':
             print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info))
             
             # save embedding
-            torch.save((user_emb, item_emb), f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
+            if epoch % 10 == 0:
+                torch.save((user_emb, item_emb),
+                           f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
     f.close()
