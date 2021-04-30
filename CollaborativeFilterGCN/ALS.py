@@ -1,7 +1,7 @@
-# 使用ALS进行矩阵分解
 from itertools import product, chain
 from copy import deepcopy
-
+from os import read
+from tqdm import tqdm
 
 class Matrix(object):
     def __init__(self, data):
@@ -243,13 +243,13 @@ class ALS(object):
 
 
     def _process_data(self, X):
-        """ 将评分矩阵X转化为稀疏矩阵
+        ''' 
+            将评分矩阵X转化为稀疏矩阵
             输入参数X:
                 X {list} -- 2d list with int or float(user_id, item_id, rating)
             输出结果:
                 dict -- {user_id: {item_id: rating}}
-                dict -- {item_id: {user_id: rating}}
-        """        
+        '''       
         self.user_ids = tuple((set(map(lambda x: x[0], X))))
         self.user_ids_dict = dict(map(lambda x: x[::-1], enumerate(self.user_ids)))
      
@@ -351,7 +351,7 @@ class ALS(object):
      
         self.user_matrix = self._gen_random_matrix(k, m)
      
-        for i in range(max_iter):
+        for i in tqdm(range(max_iter),desc='training...'):
             if i % 2:
                 items = self.item_matrix
                 self.user_matrix = self._items_mul_ratings(
@@ -400,19 +400,51 @@ def load_movie_ratings(file_name):
 
     return data
 
+def read_raw(path):
+
+    with open(path) as f:
+        User, Item, User2Item = [], [], {}
+        for l in f.readlines():
+            if len(l) > 0:
+                l = l.strip('\n').split(' ')
+                uid = int(l[0])
+                try:
+                    items = [int(i) for i in l[1:]]
+                except BaseException as e:
+                    print(uid, e)
+                    continue
+                else:
+                    User2Item[uid] = items
+                    User.extend([uid] * len(items))
+                    Item.extend(items)
+    return np.array(User), np.array(Item), User2Item
+def load_gowalla(file_name):
+    f = open(file_name)
+    lines = iter(f)
+    user,item,_= read_raw(file_name)
+    data=[]
+    length=len(user)
+    for i in range(length):
+        data.append([user[i],item[i],1])
+    f.close()
+
+    return data
+
 print("使用ALS算法") 
 model = ALS()
+
 # 数据加载
-X = load_movie_ratings('./ratings_small.csv')
+X = load_gowalla('./data/gowalla/raw/train.txt')
 # 运行max_iter次
-model.fit(X, k=3, max_iter=2)
-"""
+model.fit(X, k=3, max_iter=200)
+
+'''
 X = np.array([[1,1,1], [1,2,1], [2,1,1], [2,3,1], [3,2,1], [3,3,1], [4,1,1], [4,2,1],
               [5,4,1], [5,5,1], [6,4,1], [6,6,1], [7,5,1], [7,6,1], [8,4,1], [8,5,1], [9,4,1], [9,5,1],
               [10,7,1], [10,8,1], [11,8,1], [11,9,1], [12,7,1], [12,9,1]])
 # 运行max_iter次
-model.fit(X, k=3, max_iter=20)
-"""
+model.fit(X, k=3, max_iter=200)
+'''
 
 print("对用户进行推荐")
 user_ids = range(1, 13)
