@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--data_path', default=root + '/data', type=str)
     
     parser.add_argument('--emb_size', default=64, type=int)
-    parser.add_argument('--num_epoch', default=700, type=int)
+    parser.add_argument('--num_epoch', default=1000, type=int)
     parser.add_argument('--lr', default=0.001, type=float)
     parser.add_argument('--decay', default=0.001, type=float)
     parser.add_argument('--layers', default='[64, 64, 64]', type=str)
@@ -65,6 +65,7 @@ if __name__ == '__main__':
     adj = g.generate().cuda()
 
     gcn = NGCF(n_users, n_items, adj, args)
+    
     if args.load==0:
         print("从头开始训练")
         logdata=[]

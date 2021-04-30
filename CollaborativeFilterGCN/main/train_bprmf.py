@@ -30,7 +30,7 @@ def parse_args():
     parser.add_argument('--log', default= root + '/log/bprmf', type=str)
     parser.add_argument('--parameters_path', default=root + '/parameters/bprmf', type=str)
     parser.add_argument('--cores', default=4, type=int)
-    
+    parser.add_argument('--load', default=0, type=int)
     return parser.parse_args()
 
 
@@ -60,6 +60,14 @@ if __name__ == '__main__':
     loader = get_dataloader(train_set, train_U2I, n_items, args.batch_size, args.cores)
 
     model = BPRMF(n_users, n_items, args)
+    if args.load==0:
+        print("从头开始训练")
+        logdata=[]
+    else:
+        print("load from previous save {:d}".format(args.load))
+        logdata = np.loadtxt(open(args.log+ '_' + args.dataset_name+ '_' + str(args.load) +'.csv',"rb"),delimiter=",",skiprows=0).tolist()#return as list
+        state_dict = torch.load(args.parameters_path + '_' + args.dataset_name + '_' + str(args.load) + '.pth')
+        gcn.load_state_dict(state_dict['BPRMF'])
     model = model.cuda()
 
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -67,7 +75,7 @@ if __name__ == '__main__':
     sess = Session(model)
 
     f = open(args.log+ '_' + args.dataset_name +'.txt', 'w+')
-    for epoch in range(args.num_epoch):
+    for epoch in range(args.load,args.num_epoch):
         print('training '+args.dataset_name+'_bprmf')
         loss = sess.train(loader, optimizer, args)
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss))
@@ -86,8 +94,11 @@ if __name__ == '__main__':
 
                 print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info), file=f)
                 print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info))
-
+                tmp=[epoch+1,*loss,*perf_info]
+                logdata.append(tmp)
                 # save embedding
-                torch.save((user_emb, item_emb),
-                               f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
+
+                #torch.save((user_emb, item_emb),f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
+                torch.save({'BPRMF':gcn.state_dict()},args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
+                np.savetxt(args.log+ '_' + args.dataset_name+ '_' + str(epoch + 1) +'.csv',logdata,delimiter=',')
     f.close()

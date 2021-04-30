@@ -30,7 +30,7 @@ def parse_args():
     parser.add_argument('--log', default=root + '/log/lightgcn', type=str)
     parser.add_argument('--parameters_path', default= root + '/parameters/lightgcn', type=str)
     parser.add_argument('--cores', default=4, type=int)
-    
+    parser.add_argument('--load', default=0, type=int)
     return parser.parse_args()
 
 
@@ -62,6 +62,14 @@ if __name__ == '__main__':
     adj = g.generate().cuda()
 
     gcn = LightGCN(n_users, n_items, adj, args)
+    if args.load==0:
+        print("从头开始训练")
+        logdata=[]
+    else:
+        print("load from previous save {:d}".format(args.load))
+        logdata = np.loadtxt(open(args.log+ '_' + args.dataset_name+ '_' + str(args.load) +'.csv',"rb"),delimiter=",",skiprows=0).tolist()#return as list
+        state_dict = torch.load(args.parameters_path + '_' + args.dataset_name + '_' + str(args.load) + '.pth')
+        gcn.load_state_dict(state_dict['LightGCN'])
     gcn = gcn.cuda()
 
     optimizer = optim.Adam(gcn.parameters(), lr=args.lr)
@@ -69,7 +77,7 @@ if __name__ == '__main__':
     sess = Session(gcn)
     logdata=[]
     f = open(args.log+ '_' + args.dataset_name +'.txt', 'w+')
-    for epoch in range(args.num_epoch):
+    for epoch in range(args.load,args.num_epoch):
         print('training '+args.dataset_name+'_lightgcn')
         loss = sess.train(loader, optimizer, args)
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss))
@@ -92,7 +100,8 @@ if __name__ == '__main__':
                 logdata.append(tmp)
                 # save embedding
 
-                torch.save((user_emb, item_emb),
-                               f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
+                #torch.save((user_emb, item_emb),f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
+                torch.save({'LightGCN':gcn.state_dict()},args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
+                np.savetxt(args.log+ '_' + args.dataset_name+ '_' + str(epoch + 1) +'.csv',logdata,delimiter=',')
     f.close()
     np.savetxt(args.log+ '_' + args.dataset_name +'.csv',logdata,delimiter=',')
