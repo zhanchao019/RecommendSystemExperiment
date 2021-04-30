@@ -1,4 +1,4 @@
-root = '/home/ubuntu/work/RecommendSystemExperiment/CollaborativeFilterGCN'
+root = '/RecommendSystemExperiment/CollaborativeFilterGCN'
 import sys
 sys.path.append(root)
 
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         logdata=[]
     else:
         print("load from previous save {:d}".format(args.load))
-        logdata = np.loadtxt(open(args.log+ '_' + args.dataset_name +'.csv',"rb"),delimiter=",",skiprows=0)#return as list
+        logdata = np.loadtxt(open(args.log+ '_' + args.dataset_name+ '_' + str(args.load) +'.csv',"rb"),delimiter=",",skiprows=0).tolist()#return as list
         state_dict = torch.load(args.parameters_path + '_' + args.dataset_name + '_' + str(args.load) + '.pth')
         gcn.load_state_dict(state_dict['NGCF'])
         
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss))
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss), file=f)
-        if epoch % 10 == 0:
+        if epoch % 2 == 0:
             gcn.eval()
 
             with torch.no_grad():
@@ -109,5 +109,6 @@ if __name__ == '__main__':
 
                 #torch.save((user_emb, item_emb),f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
                 torch.save({'NGCF':gcn.state_dict()},args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
+                np.savetxt(args.log+ '_' + args.dataset_name+ '_' + str(epoch + 1) +'.csv',logdata,delimiter=',')
     f.close()
-    np.savetxt(args.log+ '_' + args.dataset_name +'.csv',logdata,delimiter=',')
+    
