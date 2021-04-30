@@ -76,22 +76,23 @@ if __name__ == '__main__':
         loss = sess.train(loader, optimizer, args)
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss))
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss), file=f)
+        if epoch % 10 == 0:
+            gcn.eval()
 
-        gcn.eval()
-        with torch.no_grad():
-            user_emb, item_emb = test(gcn, n_users, n_items)
-            perf_info = evaluate(user_emb,
-                                 item_emb,
-                                 n_users,
-                                 n_items,
-                                 train_U2I,
-                                 test_U2I,
-                                 args)
+            with torch.no_grad():
+                user_emb, item_emb = test(gcn, n_users, n_items)
+                perf_info = evaluate(user_emb,
+                                     item_emb,
+                                     n_users,
+                                     n_items,
+                                     train_U2I,
+                                     test_U2I,
+                                     args)
 
-            print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info), file=f)
-            print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info))
-            
-            # save embedding
-            if epoch%10 == 0:
+                print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info), file=f)
+                print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info))
+
+                # save embedding
+
                 torch.save((user_emb, item_emb), f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
     f.close()
