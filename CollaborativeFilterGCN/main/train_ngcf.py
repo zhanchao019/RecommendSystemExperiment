@@ -69,7 +69,7 @@ if __name__ == '__main__':
     optimizer = optim.Adam(gcn.parameters(), lr=args.lr)
 
     sess = Session(gcn)
-
+    logdata=[]
     f = open(args.log+ '_' + args.dataset_name +'.txt', 'w+')
     for epoch in range(args.num_epoch):
         print('training '+args.dataset_name+'_ngcf')
@@ -92,9 +92,11 @@ if __name__ == '__main__':
 
                 print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info), file=f)
                 print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info))
-
+                tmp=[epoch+1,*loss,*perf_info]
+                logdata.append(tmp)
                 # save embedding
 
                 torch.save((user_emb, item_emb),
                                f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
     f.close()
+    np.savetxt(args.log+ '_' + args.dataset_name +'.csv',logdata,delimiter=',')
