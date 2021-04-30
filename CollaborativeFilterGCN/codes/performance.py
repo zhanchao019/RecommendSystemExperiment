@@ -36,9 +36,9 @@ def performance_speed(scores, train_U2I, test_U2I, args):
     test_parameters = zip(test_user_set, )
     #print("1.3.1")
     #print(scores.shape)
-    print(len(train_U2I))
-    print(len(test_U2I))
-    root = '/home/ubuntu/RecommendSystemExperiment/CollaborativeFilterGCN'
+    #print(len(train_U2I))
+    #print(len(test_U2I))
+    #root = '/home/ubuntu/RecommendSystemExperiment/CollaborativeFilterGCN'
 
 
     #global scores, train_user_item, test_user_item, topks
@@ -46,7 +46,7 @@ def performance_speed(scores, train_U2I, test_U2I, args):
     #    all_perf = pool.map(test_one_perf, test_parameters)
 
     result=[]
-    for i in tqdm(test_parameters):
+    for i in tqdm(test_parameters,total=len(test_U2I),desc='testing...'):
         #print(i.shape())
         tmp=test_one_perf(i,scores,train_U2I,test_U2I,topks)
         result.append(tmp)
@@ -85,4 +85,5 @@ def get_perf(rank, uid_test_pos_items, topks):
         topk_eval[i * 2 + 1] = ndcg_k(rank[:topk], uid_test_pos_items)
 
     return topk_eval
+
 
