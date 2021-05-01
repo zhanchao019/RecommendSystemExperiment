@@ -1,4 +1,4 @@
-root = '/home/ubuntu/work/RecommendSystemExperiment/CollaborativeFilterGCN'
+root = '/RecommendSystemExperiment/CollaborativeFilterGCN'
 
 import sys
 sys.path.append(root)
@@ -13,7 +13,7 @@ from codes.performance import evaluate
 from layer.lrgccf import LRGCCF
 from session.run import Session
 from torch.utils.data import DataLoader
-
+import pickle
 
 def parse_args():
     parser = argparse.ArgumentParser(description="gcn")
@@ -69,7 +69,8 @@ if __name__ == '__main__':
         logdata=[]
     else:
         print("load from previous save {:d}".format(args.load))
-        logdata = np.loadtxt(open(args.log+ '_' + args.dataset_name+ '_' + str(args.load) +'.csv',"rb"),delimiter=",",skiprows=0).tolist()#return as list
+        with open(args.log+ '_' + args.dataset_name+ '_' + str(args.load) +'.data',"rb") as faa:
+            logdata=pickle.load(faa)
         state_dict = torch.load(args.parameters_path + '_' + args.dataset_name + '_' + str(args.load) + '.pth')
         gcn.load_state_dict(state_dict['LRGCCF'])
 
@@ -78,14 +79,14 @@ if __name__ == '__main__':
     optimizer = optim.Adam(gcn.parameters(), lr=args.lr)
 
     sess = Session(gcn)
-    logdata=[]
+    #logdata=[]
     f = open(args.log+ '_' + args.dataset_name +'.txt', 'w+')
     for epoch in range(args.load,args.num_epoch):
         print('training '+args.dataset_name+'_lrgccf')
         loss = sess.train(loader, optimizer, args)
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss))
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss), file=f)
-        if epoch % 10 == 0:
+        if epoch % 2 == 0:
             gcn.eval()
 
             with torch.no_grad():
@@ -106,6 +107,8 @@ if __name__ == '__main__':
 
                 #torch.save((user_emb, item_emb),f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
                 torch.save({'LRGCCF':gcn.state_dict()},args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
-                np.savetxt(args.log+ '_' + args.dataset_name+ '_' + str(epoch + 1) +'.csv',logdata,delimiter=',')
+                log_datafile=args.log+ '_' + args.dataset_name+ '_' + str(epoch + 1) +'.data'
+                with open(log_datafile, 'wb') as faa:
+                    pickle.dump(logdata,faa)
     f.close()
     np.savetxt(args.log+ '_' + args.dataset_name +'.csv',logdata,delimiter=',')

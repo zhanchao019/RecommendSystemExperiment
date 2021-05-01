@@ -1,4 +1,4 @@
-root = '/home/ubuntu/work/RecommendSystemExperiment/CollaborativeFilterGCN'
+root = '/RecommendSystemExperiment/CollaborativeFilterGCN'
 import sys
 sys.path.append(root)
 
@@ -12,7 +12,7 @@ from codes.performance import evaluate
 from layer.lightgcn import LightGCN
 from session.run import Session
 from torch.utils.data import DataLoader
-
+import pickle
 
 def parse_args():
     parser = argparse.ArgumentParser(description="gcn")
@@ -67,7 +67,10 @@ if __name__ == '__main__':
         logdata=[]
     else:
         print("load from previous save {:d}".format(args.load))
-        logdata = np.loadtxt(open(args.log+ '_' + args.dataset_name+ '_' + str(args.load) +'.csv',"rb"),delimiter=",",skiprows=0).tolist()#return as list
+        #logdata = np.loadtxt(open(args.log+ '_' + args.dataset_name+ '_' + str(args.load) +'.data',"rb"),delimiter=",",skiprows=0).tolist()#return as list
+        with open(args.log+ '_' + args.dataset_name+ '_' + str(args.load) +'.data',"rb") as faa:
+            logdata=pickle.load(faa)
+        print(logdata)
         state_dict = torch.load(args.parameters_path + '_' + args.dataset_name + '_' + str(args.load) + '.pth')
         gcn.load_state_dict(state_dict['LightGCN'])
     gcn = gcn.cuda()
@@ -75,14 +78,15 @@ if __name__ == '__main__':
     optimizer = optim.Adam(gcn.parameters(), lr=args.lr)
 
     sess = Session(gcn)
-    logdata=[]
+    #logdata=[]
+    
     f = open(args.log+ '_' + args.dataset_name +'.txt', 'w+')
     for epoch in range(args.load,args.num_epoch):
         print('training '+args.dataset_name+'_lightgcn')
         loss = sess.train(loader, optimizer, args)
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss))
         print("epoch:{:d}, loss:[{:.6f}] = mf:[{:.6f}] + reg:[{:.6f}]".format(epoch+1, *loss), file=f)
-        if epoch % 10 == 0:
+        if epoch % 2 == 0:
             gcn.eval()#打开评估模式
             with torch.no_grad():
                 user_emb, item_emb = test(gcn, n_users, n_items)
@@ -98,10 +102,14 @@ if __name__ == '__main__':
                 print("recall@10:[{:.6f}], ndcg@10:[{:.6f}], recall@20:[{:.6f}], ndcg@20:[{:.6f}]".format(*perf_info))
                 tmp=[epoch+1,*loss,*perf_info]
                 logdata.append(tmp)
+                print(logdata)
                 # save embedding
 
                 #torch.save((user_emb, item_emb),f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
                 torch.save({'LightGCN':gcn.state_dict()},args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
-                np.savetxt(args.log+ '_' + args.dataset_name+ '_' + str(epoch + 1) +'.csv',logdata,delimiter=',')
+                log_datafile=args.log+ '_' + args.dataset_name+ '_' + str(epoch + 1) +'.data'
+                with open(log_datafile, 'wb') as faa:
+                    pickle.dump(logdata,faa)
+                
     f.close()
-    np.savetxt(args.log+ '_' + args.dataset_name +'.csv',logdata,delimiter=',')
+    np.savetxt(args.log+ '_' + args.dataset_name +'.data',logdata,delimiter=',')
