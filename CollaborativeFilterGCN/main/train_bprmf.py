@@ -69,7 +69,7 @@ if __name__ == '__main__':
         with open(args.log+ '_' + args.dataset_name+ '_' + str(args.load) +'.data',"rb") as faa:
             logdata=pickle.load(faa)
         state_dict = torch.load(args.parameters_path + '_' + args.dataset_name + '_' + str(args.load) + '.pth')
-        gcn.load_state_dict(state_dict['BPRMF'])
+        model.load_state_dict(state_dict['BPRMF'])
     model = model.cuda()
 
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -101,7 +101,7 @@ if __name__ == '__main__':
                 # save embedding
 
                 #torch.save((user_emb, item_emb),f=args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
-                torch.save({'BPRMF':gcn.state_dict()},args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
+                torch.save({'BPRMF':model.state_dict()},args.parameters_path + '_' + args.dataset_name + '_' + str(epoch + 1) + '.pth')
                 log_datafile=args.log+ '_' + args.dataset_name+ '_' + str(epoch + 1) +'.data'
                 with open(log_datafile, 'wb') as faa:
                     pickle.dump(logdata,faa)
